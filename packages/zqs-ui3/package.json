@@ -4,7 +4,6 @@
   "author": "zqs",
   "license": "MIT",
   "description": "A Vue 3 component",
-  "private": true,
   "type": "module",
   "main": "dist/zqs-ui3.umd.js",
   "module": "dist/zqs-ui3.es.js",
