@@ -1,0 +1,33 @@
+{
+  "name": "zqs-ui",
+  "private": true,
+  "workspaces": [
+    "packages/zqs-ui2",
+    "packages/zqs-ui3"
+  ],
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build:docs": "vitepress build docs",
+    "build:ui2": "pnpm -C packages/zqs-ui2 build",
+    "build:ui3": "pnpm -C packages/zqs-ui3 build",
+    "preview": "vitepress preview docs",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "publish:ui2": "cd packages/zqs-ui2 && npm publish --access public",
+    "publish:ui3": "cd packages/zqs-ui3 && npm publish --access public"
+  },
+  "pnpm": {
+    "overrides": {
+      "vue@workspace:zqs-ui2": "2.7.16",
+      "vue-template-compiler@workspace:zqs-ui2": "2.7.16",
+      "vue@workspace:zqs-ui3": "^3.5.13",
+      "vite@workspace:zqs-ui2": "4.5.12",
+      "vite@workspace:zqs-ui3": "6.2.4" 
+    }
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.28.1",
+    "vitepress": "^1.6.3"
+  }
+}

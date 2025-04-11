@@ -1,0 +1,18 @@
+# 忽略 node_modules 文件夹
+node_modules/
+
+# 忽略 pnpm 缓存文件夹
+.pnpm-debug.log
+.pnpm/
+
+# 忽略构建输出
+dist/
+
+# 忽略 lock 文件（如果不需要版本控制）
+pnpm-lock.yaml
+
+# 忽略 Changesets 临时文件
+.changeset/
+
+# 忽略 VitePress 文档
+docs/

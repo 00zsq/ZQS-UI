@@ -1,0 +1,31 @@
+{
+  "name": "zqs-ui2",
+  "version": "1.0.0",
+  "author": "zqs",
+  "license": "MIT",
+  "description": "A Vue 2 component",
+  "main": "dist/zqs-ui2.umd.js",
+  "module": "dist/zqs-ui2.es.js",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "vue",
+    "vue2",
+    "ui",
+    "components"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "peerDependencies": {
+    "vue": "^2.7.16"
+  },
+  "devDependencies": {
+    "sass": "^1.86.3",
+    "vite": "^4.5.12",
+    "vite-plugin-vue2": "^2.0.3",
+    "vue-template-compiler": "^2.7.16"
+  }
+}
