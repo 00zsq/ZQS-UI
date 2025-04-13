@@ -40,7 +40,7 @@ onMounted(
     tableRef.value.style.height = props.height
   }
 )
-console.log(props.stript)
+// console.log(props.stript)
 </script>
 <template>
     <table class="zqs-table" ref="tableRef">
