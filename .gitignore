@@ -5,8 +5,6 @@ node_modules/
 .pnpm-debug.log
 .pnpm/
 
-# 忽略构建输出
-dist/
 
 # 忽略 lock 文件（如果不需要版本控制）
 pnpm-lock.yaml
