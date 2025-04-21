@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       visible: true,
-    };
+    }
   },
   mounted() {
     // 自动关闭
@@ -37,7 +37,7 @@ export default {
       this.$emit("close");
     },
   },
-};
+}
 </script>
 
 <template>

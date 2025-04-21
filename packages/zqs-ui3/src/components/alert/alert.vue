@@ -1,42 +1,52 @@
 <script>
 export default {
-  name: "zqs-alert",
-  props: {
-    type: {
-      type: String,
-      default: "info", // 类型：success, warning, info, error
-    },
-    size: {
-      type: String,
-      default: "medium", // 弹框大小：small, medium, large
-      validator: (value) => ["small", "medium", "large"].includes(value),
-    },
-    message: {
-      type: String,
-      required: true, // 提示内容
-    },
-    duration: {
-      type: Number,
-      default: 3000, // 自动关闭时间，单位毫秒
-    },
+  name: 'zqs-alert'
+}
+</script>
+
+<script setup>
+import { ref, onMounted, defineProps, defineEmits } from 'vue'
+
+// 定义组件的 props
+const props = defineProps({
+  type: {
+    type: String,
+    default: 'info', // 类型：success, warning, info, error
   },
-  data() {
-    return {
-      visible: true,
-    }
+  size: {
+    type: String,
+    default: 'medium', // 弹框大小：small, medium, large
+    validator: (value) => ['small', 'medium', 'large'].includes(value),
   },
-  mounted() {
-    // 自动关闭
+  message: {
+    type: String,
+    required: true, // 提示内容
+  },
+  duration: {
+    type: Number,
+    default: 3000, // 自动关闭时间，单位毫秒
+  },
+})
+
+// 定义组件的事件
+const emit = defineEmits(['close'])
+
+// 控制弹框的显示状态
+const visible = ref(true)
+
+// 自动关闭逻辑
+onMounted(() => {
+  if (props.duration > 0) {
     setTimeout(() => {
-      this.close()
-    }, this.duration)
-  },
-  methods: {
-    close() {
-      this.visible = false
-      this.$emit("close")
-    },
-  },
+      close()
+    }, props.duration)
+  }  
+})
+
+// 关闭弹框的方法
+const close = () => {
+  visible.value = false
+  emit('close') // 触发关闭事件
 }
 </script>
 
@@ -45,9 +55,9 @@ export default {
     <div
       v-if="visible"
       class="zqs-alert"
-      :class="[`zqs-alert--${type}`, `zqs-alert-${size}`]"
+      :class="[`zqs-alert--${props.type}`, `zqs-alert-${props.size}`]"
     >
-      <div class="zqs-alert__content">{{ message }}</div>
+      <div class="zqs-alert__content">{{ props.message }}</div>
     </div>
   </transition>
 </template>
@@ -56,7 +66,7 @@ export default {
 /* 基本样式 */
 .zqs-alert {
   position: fixed;
-  top: 20px; 
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   border-radius: 8px;
@@ -75,18 +85,18 @@ export default {
 }
 
 .zqs-alert--warning {
-  background-color: #FDF6EC;
-  color: #E6A23C;
+  background-color: #fdf6ec;
+  color: #e6a23c;
 }
 
 .zqs-alert--info {
-  background-color: #F4F4F5;
+  background-color: #f4f4f5;
   color: #909399;
 }
 
 .zqs-alert--error {
-  background-color: #FEF0F0;
-  color: #F56C6C;
+  background-color: #fef0f0;
+  color: #f56c6c;
 }
 
 /* 大小样式 */

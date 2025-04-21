@@ -13,6 +13,3 @@ pnpm-lock.yaml
 
 # 忽略 Changesets 临时文件
 .changeset/
-
-# 忽略 VitePress 文档
-docs/

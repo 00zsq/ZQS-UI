@@ -1,29 +1,38 @@
 <script>
 export default {
-  name: "zqs-header",
-  props: {
-    logo: {
-      type: String,
-      required: true, // 左侧 Logo 图片路径
-    },
-    systemName: {
-      type: String,
-      required: true, // 系统名称
-    },
-    avatar: {
-      type: String,
-      required: true, // 右侧头像图片路径
-    },
-    username: {
-      type: String,
-      required: true, // 用户名
-    },
+  name: 'zqs-header'
+}
+</script>
+
+<script setup>
+import { defineProps, defineEmits } from 'vue'
+
+// 定义组件的 props
+const props = defineProps({
+  logo: {
+    type: String,
+    required: true, // 左侧 Logo 图片路径
   },
-  methods: {
-    handleLogout() {
-      this.$emit("logout") // 触发父组件的登出事件
-    },
+  systemName: {
+    type: String,
+    required: true, // 系统名称
   },
+  avatar: {
+    type: String,
+    required: true, // 右侧头像图片路径
+  },
+  username: {
+    type: String,
+    required: true, // 用户名
+  },
+})
+
+// 定义组件的事件
+const emit = defineEmits(['logout'])
+
+// 处理登出事件
+const handleLogout = () => {
+  emit('logout') // 触发父组件的登出事件
 }
 </script>
 
@@ -32,13 +41,13 @@ export default {
     <!-- 左侧 Logo 和系统名称 -->
     <div class="left">
       <img :src="logo" alt="Logo" class="logo" />
-      <span class="system-name">{{ systemName }}</span>
+      <span class="system-name">{{ props.systemName }}</span>
     </div>
 
     <!-- 右侧头像和用户名 -->
     <div class="right">
       <img :src="avatar" alt="Avatar" class="avatar" />
-      <span class="username">{{ username }}</span>
+      <span class="username">{{ props.username }}</span>
       <button class="logout-button" @click="handleLogout">退出登录</button>
     </div>
   </header>
