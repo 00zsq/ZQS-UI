@@ -1,0 +1,11 @@
+:root {
+  /* name的颜色 */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient( 135deg, #f1cbd2 25%, #70a8f0 100%);
+  
+  /* 图标背景 */
+  --vp-home-hero-image-background-image: linear-gradient( 120deg, #e9a1ae 50%, #6a7ad4 90%);
+  --vp-home-hero-image-filter: blur(140px);
+  /* 按钮颜色 */
+  --vp-c-brand-1: #2271d8;
+}
