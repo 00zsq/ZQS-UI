@@ -1,5 +1,11 @@
 # zqs-ui3
 
+## 3.0.0
+
+### Major Changes
+
+- 修改两个组件，新增 menu 以及 card
+
 ## 2.0.0
 
 ### Major Changes
