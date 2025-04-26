@@ -87,14 +87,16 @@ export default defineConfig({
         {
           text: '数据展示',
           items: [
-            { text: 'zqs-table', link: '/components/zqs-ui3/zqs-table' }
+            { text: 'zqs-table', link: '/components/zqs-ui3/zqs-table' },
+            { text: 'zqs-card', link: '/components/zqs-ui3/zqs-card' },
           ]
         },
         {
           text: '导航组件',
           items: [
             { text: 'zqs-backTop', link: '/components/zqs-ui3/zqs-backTop' },
-            { text: 'zqs-header', link: '/components/zqs-ui3/zqs-header' }
+            { text: 'zqs-header', link: '/components/zqs-ui3/zqs-header' },
+            { text: 'zqs-menu', link: '/components/zqs-ui3/zqs-menu' }
           ]
         },
         {

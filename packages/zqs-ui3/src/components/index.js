@@ -7,6 +7,8 @@ import ZqsSelect from './select/select.js'
 import ZqsSelectOption from './select-option/option.js'
 import ZqsBackTop from './backtop/backtop.js'
 import ZqsHeader from './header/header.js'
+import ZqsCard from './card/card.js'
+import ZqsMenu from './menu/menu.js'
 
 // 组件列表
 const elmPlusComponents = [
@@ -18,6 +20,8 @@ const elmPlusComponents = [
   ZqsSelectOption,
   ZqsBackTop,
   ZqsHeader,
+  ZqsCard,
+  ZqsMenu,
 ];
 
 // 安装方法：全局注册静态组件
@@ -42,5 +46,7 @@ export {
   ZqsSelectOption,
   ZqsBackTop,
   ZqsHeader,
+  ZqsCard,
+  ZqsMenu,
   ZqsAlertConstructor as ZqsAlert, // 导出动态调用方法
 }
