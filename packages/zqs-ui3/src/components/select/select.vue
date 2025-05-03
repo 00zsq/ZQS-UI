@@ -1,111 +1,130 @@
-<!-- 外界传入modelView -->
-<script>
+<script lang="ts">
 export default {
-  name: "zqs-select"
+  name: "zqs-select",
 }
 </script>
-<script setup>
-import { ref, provide,watch } from 'vue'
+
+<script lang="ts" setup>
+import { ref, provide, watch, defineProps, defineEmits } from 'vue'
+
+// 定义组件的 props 类型
+interface SelectOption {
+  label: string
+  value: string
+}
+
+interface SelectProps {
+  options: SelectOption[]
+  modelValue: string
+  disabled: boolean
+}
+
+// 定义组件的 props
+const props = defineProps<SelectProps>()
+
+// 定义组件的事件
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: string): void
+}>()
+
+// 控制下拉框显示状态
 const positionShow = ref(false)
-const vClickOutside = {
-    beforeMount(el) {
-        document.addEventListener('click', (e) => {
-            // 如果点击的区域包含在被绑定的元素区域中，则positon显现
-            if (el.contains(e.target)){
-                positionShow.value = true
-                isBorder.value = true
-            }
-            else{
-                positionShow.value = false
-                isBorder.value = false
-                isEmpty.value = false
-            }
-        })
-    },
-}
-const props = defineProps({
-    options: {
-        type: Array,
-        default: () => []
-    },
-    modelValue: {
-        type: String,
-        default: ''
-    },
-    disabled: {
-        type: Boolean,
-        default: false
-    }
-})
+
+// 输入框的显示文本
 const selectLabel = ref('Select')
+
+// 是否为空状态
 const isEmpty = ref(true)
+
+// 是否显示边框高亮
 const isBorder = ref(false)
-// option调用方法更改父组件状态
-const emit = defineEmits(['update:modelValue'])
-const changeSelectValue = (value, label) => {
-    emit('update:modelValue', value)
-    if (props.disabled == true) return
-    selectLabel.value = label || value || ''
-    isEmpty.value = false
+
+// 自定义指令：点击外部关闭下拉框
+const vClickOutside = {
+  beforeMount(el: HTMLElement) {
+    document.addEventListener('click', (e) => {
+      if (el.contains(e.target as Node)) {
+        positionShow.value = true
+        isBorder.value = true
+      } else {
+        positionShow.value = false
+        isBorder.value = false
+        isEmpty.value = false
+      }
+    })
+  },
 }
+
+// 更改选中值的方法
+const changeSelectValue = (value: string, label?: string) => {
+  if (props.disabled) return
+  emit('update:modelValue', value)
+  selectLabel.value = label || value || ''
+  isEmpty.value = false
+}
+
 // 传递响应式数据
 const modelValue2 = ref(props.modelValue)
-watch(()=>props.modelValue,()=>{
-    modelValue2.value = props.modelValue
+watch(() => props.modelValue, () => {
+  modelValue2.value = props.modelValue
 })
 provide('selectValue', modelValue2)
 provide('changeSelectValue', changeSelectValue)
 </script>
+
 <template>
-    <div class="zqs-select" v-clickOutside>
-        <input type="text"  :disabled="props.disabled" :value="selectLabel" readonly :style="{
-            'color': isEmpty == false ? 'black' : 'silver'
-        }"
-        :class="[{'border':isBorder}]"
-        >
+  <div class="zqs-select" v-clickOutside>
+    <input
+      type="text"
+      :disabled="props.disabled"
+      :value="selectLabel"
+      readonly
+      :style="{ color: isEmpty ? 'silver' : 'black' }"
+      :class="{ border: isBorder }"
+    />
 
-        <transition name="slide-fade">
-            <div class="zqs-position-box" v-show="positionShow">
-                <slot></slot>
-
-            </div>
-        </transition>
-    </div>
+    <transition name="slide-fade">
+      <div class="zqs-position-box" v-show="positionShow">
+        <slot></slot>
+      </div>
+    </transition>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 .zqs-select {
-    min-width: 200px;
+  min-width: 200px;
+  box-sizing: border-box;
+  display: inline-block;
+  height: 40px;
+  position: relative;
+
+  input {
+    border-radius: 5px;
     box-sizing: border-box;
-    display: inline-block;
-    height: 40px;
-    position: relative;
+    border: 1px solid silver;
+    padding: 8px 10px;
+    outline: none;
+    width: 100%;
+    font-size: 16px;
+  }
 
-    input {
-        border-radius: 5px;
-        box-sizing: border-box;
-        border: 1px solid silver;
-        padding: 8px 10px;
-        outline: none;
-        width: 100%;
-        font-size: 16px;
-    }
-    input.border{
+  input.border {
     border: 1px solid #0856ec;
-}
+  }
 
-    .zqs-position-box {
-        box-sizing: border-box;
-        width: 100%;
-        height: auto;
-        overflow: hidden;
-        z-index: 9999;
-        position: absolute;
-        top: 48px;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2);
-    }
+  .zqs-position-box {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    z-index: 9999;
+    position: absolute;
+    top: 48px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .slide-fade-enter-active {
@@ -122,4 +141,3 @@ provide('changeSelectValue', changeSelectValue)
   opacity: 0;
 }
 </style>
-

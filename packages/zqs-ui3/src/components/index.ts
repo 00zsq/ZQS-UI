@@ -25,7 +25,7 @@ const elmPlusComponents = [
 ];
 
 // 安装方法：全局注册静态组件
-const install = (app) => {
+const install = (app: any) => {
   elmPlusComponents.forEach((comp) => app.use(comp))
   app.config.globalProperties.$alert = ZqsAlertConstructor // 挂载动态调用方法
   app.provide('ZqsAlert', ZqsAlertConstructor)

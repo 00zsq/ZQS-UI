@@ -1,46 +1,44 @@
-<!-- button.vue -->
-<script>
+<script lang="ts">
 export default {
     name: "zqs-button"
 }
 </script>
-<script setup>
-const props = defineProps({
-    type: {
-        type: String,
-        default: 'default'
-    },
-    plain: {
-        type: Boolean,
-        default: false
-    },
-    round: {
-        type: Boolean,
-        default: false
-    },
-    circle: {
-        type: Boolean,
-        default: false
-    },
-    disabled: {
-        type: Boolean,
-        default: false
-    },
-    size: {
-        type: String,
-        default: 'medium',
-    },
-    loading: {
-        type: Boolean,
-        default: false
-    }
-})
-// 支持点击事件
-const emit = defineEmits(['click'])
-const handleClick = () => {
-    emit('click')
+<script lang="ts" setup>
+import { defineProps, defineEmits } from 'vue'
+
+// 定义组件的 props 类型
+interface ButtonProps {
+  type?: 'default' | 'primary' | 'success' | 'info' | 'warning' | 'danger'
+  plain?: boolean
+  round?: boolean
+  circle?: boolean
+  disabled?: boolean
+  size?: 'small' | 'medium' | 'large'
+  loading?: boolean
 }
 
+// 定义组件的 props
+const props = withDefaults(defineProps<ButtonProps>(), {
+    type: 'default',
+    plain: false,
+    round: false,
+    circle: false,
+    disabled: false,
+    size: 'medium',
+    loading: false
+})
+
+// 定义组件的事件
+const emit = defineEmits<{
+  (event: 'click'): void
+}>()
+
+// 点击事件处理
+const handleClick = () => {
+  if (!props.disabled) {
+    emit('click')
+  }
+}
 </script>
 
 <template>

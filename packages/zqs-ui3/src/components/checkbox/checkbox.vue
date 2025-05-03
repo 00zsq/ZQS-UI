@@ -1,94 +1,82 @@
-<!-- checkbox.vue -->
-<script>
-export default {
-  name: "zqs-checkbox"
-}
-</script>
-<script setup>
-import { inject, ref } from 'vue'
-const props = defineProps({
-    modelValue: {
-        type: Boolean,
-        default: false
-    },
-    name: {
-        type: String,
-        default: ''
-    },
-    label: {
-        type: String,
-        default: ''
-    },
-    value: {
-        type: String,
-        default: ''
-    },
-    disabled: {
-        type: Boolean,
-        default: false
-    }
-})
-let checkboxGroupList = inject('checkbox-group')
-let checkboxGroupHandleClick = inject('checkbox-group-handleClick')
-const isChecked = ref(false)
-console.log(checkboxGroupList)
+<script lang="ts" setup>
+import { inject, ref, defineProps, defineEmits } from 'vue'
 
-// 使用checkbox-group情况下根据v-model数组渲染多选框选中情况
+// 定义组件的 props 类型
+interface CheckboxProps {
+    modelValue?: boolean
+    name?: string
+    label?: string
+    value?: string
+    disabled?: boolean
+}
+
+// 定义组件的 props
+const props = withDefaults(defineProps < CheckboxProps > (), {
+    modelValue: false,
+    name: '',
+    label: '',
+    value: '',
+    disabled: false,
+})
+
+// 注入 checkbox-group 的上下文
+const checkboxGroupList = inject < string[] > ('checkbox-group', [])
+const checkboxGroupHandleClick = inject < (list: string[]) => void> ('checkbox-group-handleClick', () => { })
+
+// 控制选中状态
+const isChecked = ref(false)
+
+// 初始化选中状态
 const getChecked = () => {
-    // 遍历数组，如果数组中有值与此checkbox的value值相同，则选中
-    if (checkboxGroupList != undefined) {
-        for (let i = 0; i < checkboxGroupList.length; i++) {
-            console.log(props.value)
-            if (checkboxGroupList[i] === props.value) {
-                isChecked.value = true
-                console.log(isChecked.value)
-            }
-        }
+    if (checkboxGroupList) {
+        isChecked.value = checkboxGroupList.includes(props.value || '')
     }
 }
 getChecked()
 
+// 定义组件的事件
+const emit = defineEmits < {
+  (event: 'update:modelValue', value: boolean): void
+}> ()
 
-// 改变多选框状态
-const emit = defineEmits(['update:modelValue'])
+// 点击事件处理
 const handleClick = () => {
-    if (checkboxGroupList != undefined) {
-        // 如果按钮为禁用状态则直接返回
-        if(props.disabled == true) {
-            return
-        }
-        // 如果数组中有这个值就删掉，没有就加上
-        if(checkboxGroupList.includes(props.value)) {
-            checkboxGroupList.splice(checkboxGroupList.indexOf(props.value), 1)
+    if (props.disabled) return
+
+    if (checkboxGroupList) {
+        const value = props.value || ''
+        if (checkboxGroupList.includes(value)) {
+            checkboxGroupList.splice(checkboxGroupList.indexOf(value), 1)
             isChecked.value = false
-        }else{
-            checkboxGroupList.push(props.value)
+        } else {
+            checkboxGroupList.push(value)
             isChecked.value = true
         }
         checkboxGroupHandleClick(checkboxGroupList)
-    }
-    else {
+    } else {
         emit('update:modelValue', !props.modelValue)
     }
 }
 </script>
+
 <template>
-    <label class="zqs-checkbox"
-        :class="[{ 'is-checked': (props.modelValue == false ? isChecked : props.modelValue) }, { 'is-disabled': props.disabled }]">
+    <label class="zqs-checkbox" :class="[
+        { 'is-checked': props.modelValue === false ? isChecked : props.modelValue },
+        { 'is-disabled': props.disabled }
+    ]">
         <span class="zqs-checkbox-input">
             <span class="zqs-checkbox-inner"></span>
-            <input type="checkbox" class="zqs-checkbox-original" @click="handleClick">
+            <input type="checkbox" class="zqs-checkbox-original" @click="handleClick" />
         </span>
         <span class="zqs-checkbox-label">
             <slot></slot>
             <template v-if="!$slots.default">
-                {{ label }}
+                {{ props.label }}
             </template>
         </span>
     </label>
 </template>
 
-   
 <style lang="scss" scoped>
 .zqs-checkbox {
     color: #606266;
@@ -120,7 +108,8 @@ const handleClick = () => {
             height: 14px;
             background-color: #fff;
             z-index: 1;
-            transition: border-color .25s cubic-bezier(.71, -.46, .29, 1.46), background-color .25s, cubic-bezier(.71, -.46, .29, 1.46);
+            transition: border-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46),
+                background-color 0.25s cubic-bezier(0.71, -0.46, 0.29, 1.46);
 
             &:after {
                 box-sizing: content-box;
@@ -134,7 +123,7 @@ const handleClick = () => {
                 top: 1px;
                 transform: rotate(45deg) scaleY(0);
                 width: 3px;
-                transition: transform .15s ease-in .05s;
+                transition: transform 0.15s ease-in 0.05s;
                 transform-origin: center;
             }
         }

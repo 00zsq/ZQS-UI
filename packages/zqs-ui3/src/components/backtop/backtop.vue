@@ -1,50 +1,48 @@
-<script>
+<script lang="ts">
 export default {
   name: 'zqs-backTop'
 }
 </script>
 
-<script setup>
+<script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount, defineProps, defineEmits } from 'vue'
 
+// 定义组件的 props 类型
+interface BackTopProps {
+  target?: string
+  visibilityHeight?: number
+  right?: string
+  bottom?: string
+}
+
 // 定义组件的 props
-const props = defineProps({
-  target: {
-    type: String,
-    default: '',
-  },
-  visibilityHeight: {
-    type: Number,
-    default: 200,
-  },
-  right: {
-    type: String,
-    default: '40px',
-  },
-  bottom: {
-    type: String,
-    default: '40px',
-  },
+const props = withDefaults(defineProps<BackTopProps>(), {
+  target: '',
+  visibilityHeight: 200,
+  right: '40px',
+  bottom: '40px'
 })
 
 // 定义组件的事件
-const emit = defineEmits(['click'])
+const emit = defineEmits<{
+  (event: 'click'): void
+}>()
 
 // 控制显示状态
 const visible = ref(false)
-let container = null
-let scrollEvent = null
+let container: HTMLElement | Window | null = null
+let scrollEvent: (() => void) | null = null
 
 // 初始化容器
 const initContainer = () => {
-  container = props.target ? document.querySelector(props.target) : window
+  container = props.target ? (document.querySelector(props.target) as HTMLElement) : window
   if (!container) {
     throw new Error(`Target element ${props.target} not found.`)
   }
 }
 
 // 获取滚动位置
-const getScrollTop = () => {
+const getScrollTop = (): number => {
   if (container === window) {
     return Math.max(
       window.pageYOffset,
@@ -52,22 +50,22 @@ const getScrollTop = () => {
       document.body.scrollTop
     )
   }
-  return container.scrollTop
+  return (container as HTMLElement).scrollTop
 }
 
 // 设置滚动位置
-const setScrollTop = (value) => {
+const setScrollTop = (value: number) => {
   if (container === window) {
     window.scrollTo(0, value)
   } else {
-    container.scrollTop = value
+    (container as HTMLElement).scrollTop = value
   }
 }
 
 // 处理滚动事件
 const handleScroll = () => {
   const scrollTop = getScrollTop()
-  visible.value = scrollTop >= props.visibilityHeight
+  visible.value = scrollTop >= (props.visibilityHeight)
 }
 
 // 绑定滚动事件
@@ -120,12 +118,12 @@ const handleClick = () => {
 }
 
 // 节流函数
-const throttle = (fn, delay) => {
+const throttle = (fn: (...args: any[]) => void, delay: number) => {
   let lastTime = 0
-  return function (...args) {
+  return (...args: any[]) => {
     const now = Date.now()
     if (now - lastTime >= delay) {
-      fn.apply(this, args)
+      fn(...args)
       lastTime = now
     }
   }

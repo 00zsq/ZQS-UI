@@ -1,78 +1,78 @@
-<script>
-  export default {
-    name: "zqs-menu",
-  }
+<script lang="ts">
+export default {
+  name: "zqs-menu",
+}
 </script>
 
-<script setup>
-import { ref, provide, reactive, onMounted } from "vue"
+<script lang="ts" setup>
+import { ref, provide, reactive, onMounted, defineProps, defineEmits } from "vue"
 
-const props = defineProps({
-  menuList: {
-    type: Array,
-    default: () => [],
-  },
-  align: {
-    type: String,
-    default: "left",
-    validator: (v) => ["left", "right"].includes(v),
-  },
-  width: {
-    type: String,
-    default: "100%",
-  },
-  height: {
-    type: String,
-    default: "70px",
-  },
-  activeBackgroundColor: {
-    type: String,
-    default: "#007bff",
-  },
-  activeTextColor: {
-    type: String,
-    default: "#fff",
-  },
-  menuBackgroundColor: {
-    type: String,
-    default: "#f8f9fa",
-  },
+// 定义菜单项的类型
+interface MenuItem {
+  text: string
+  link?: string
+  subMenu?: MenuItem[]
+}
+
+// 定义组件的 props 类型
+interface MenuProps {
+  menuList: MenuItem[]
+  align?: "left" | "right"
+  width?: string
+  height?: string
+  activeBackgroundColor?: string
+  activeTextColor?: string
+  menuBackgroundColor?: string
+}
+
+// 定义组件的 props
+const props = withDefaults(defineProps<MenuProps>(), {
+  menuList: () => [] as MenuItem[],
+  align: "left",
+  width: "100%",
+  height: "70px",
+  activeBackgroundColor: "#007bff",
+  activeTextColor: "#fff",
+  menuBackgroundColor: "#f8f9fa",
 })
 
 // 使用 reactive 来确保菜单状态是响应式的
 const menuState = reactive({
   items: props.menuList.map(item => ({
     ...item,
-    showSubMenu: false
-  }))
+    showSubMenu: false,
+  })),
 })
 
-// 从localStorage读取之前选中的菜单项
+// 从 localStorage 读取之前选中的菜单项
 const currentMenuValue = ref("")
-const emit = defineEmits(['route-change'])
+const emit = defineEmits<{
+  (event: "route-change", route: string): void
+}>()
 
 // 初始化时加载保存的选中项
 onMounted(() => {
-  const savedMenuItem = localStorage.getItem("selectedMenu") || props.menuList[0].text
+  const savedMenuItem = localStorage.getItem("selectedMenu") || props.menuList[0]?.text
   if (savedMenuItem) {
     currentMenuValue.value = savedMenuItem
   }
 })
 
-const changeMenuValue = (value, parentText = null, route = null) => {
+// 改变菜单选中项
+const changeMenuValue = (value: string, parentText: string | null = null, route: string | null = null) => {
   currentMenuValue.value = value
-  
+
   if (parentText) {
     localStorage.setItem("parentMenuText", parentText)
   } else {
     localStorage.removeItem("parentMenuText")
   }
-  
+
   localStorage.setItem("selectedMenu", value)
-  
+
   // 如果提供了路由路径，则发出路由变更事件
   if (route) {
-    emit('route-change', route)
+    emit("route-change", route)
   }
 }
 
@@ -88,22 +88,24 @@ onMounted(() => {
 })
 
 // 控制下拉菜单的显示和隐藏
-const toggleSubMenu = (index, show) => {
+const toggleSubMenu = (index: number, show: boolean) => {
   menuState.items[index].showSubMenu = show
 }
 
 // 处理点击事件
-const handleItemClick = (item, index) => {
-  changeMenuValue(item.text, null, item.link)
+const handleItemClick = (item: MenuItem, index: number) => {
+  changeMenuValue(item.text, null, item.link || "")
   if (item.subMenu) {
     menuState.items[index].showSubMenu = !menuState.items[index].showSubMenu
   }
 }
+
 // 判断菜单项是否应该高亮
-const isMenuHighlighted = (item) => {
+const isMenuHighlighted = (item: MenuItem) => {
   return currentMenuValue.value === item.text || parentMenuText.value === item.text
 }
 
+// 提供给子组件使用的上下文
 provide("currentMenuValue", currentMenuValue)
 provide("changeMenuValue", changeMenuValue)
 </script>
@@ -112,7 +114,7 @@ provide("changeMenuValue", changeMenuValue)
   <div class="zqs-menu" :class="`align-${props.align}`" :style="{
     backgroundColor: props.menuBackgroundColor,
     width: props.width,
-    height: props.height
+    height: props.height,
   }">
     <ul class="menu-list">
       <li v-for="(item, index) in menuState.items" :key="index" class="menu-item">
@@ -120,10 +122,12 @@ provide("changeMenuValue", changeMenuValue)
           <div class="menu-item-wrapper" @mouseenter="toggleSubMenu(index, true)"
             @mouseleave="toggleSubMenu(index, false)">
             <div class="menu-item-content" @click="handleItemClick(item, index)"
-              :class="{ 'is-selected': isMenuHighlighted(item) }" :style="isMenuHighlighted(item) ? {
-                color: props.activeTextColor,
-                backgroundColor: props.activeBackgroundColor
-              } : {}">
+              :class="{ 'is-selected': isMenuHighlighted(item) }" :style="isMenuHighlighted(item)
+                ? {
+                  color: props.activeTextColor,
+                  backgroundColor: props.activeBackgroundColor,
+                }
+                : {}">
               <span>{{ item.text }}</span>
               <span class="arrow-down">▼</span>
             </div>
@@ -139,10 +143,12 @@ provide("changeMenuValue", changeMenuValue)
         </template>
         <template v-else>
           <a :href="item.link" @click="changeMenuValue(item.text)"
-            :class="{ 'is-selected': currentMenuValue === item.text }" :style="currentMenuValue === item.text ? {
-              color: props.activeTextColor,
-              backgroundColor: props.activeBackgroundColor
-            } : {}">
+            :class="{ 'is-selected': currentMenuValue === item.text }" :style="currentMenuValue === item.text
+              ? {
+                color: props.activeTextColor,
+                backgroundColor: props.activeBackgroundColor,
+              }
+              : {}">
             {{ item.text }}
           </a>
         </template>
@@ -150,6 +156,10 @@ provide("changeMenuValue", changeMenuValue)
     </ul>
   </div>
 </template>
+
+<style scoped>
+/* 样式保持不变 */
+</style>
 
 <style scoped>
 /* 主菜单样式 */
